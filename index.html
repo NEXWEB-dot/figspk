@@ -1,0 +1,1061 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>figs.pk — Winter '26</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&display=swap" rel="stylesheet" />
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: '#000000',
+          },
+          fontFamily: {
+            sans: ['Montserrat', 'sans-serif'],
+          },
+        },
+      },
+    };
+  </script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { background: #fff; color: #222; font-family: 'Montserrat', sans-serif; overflow-x: hidden; }
+
+    /* ── Announcement bar ── */
+    .ann-bar { background: #000; color: #fff; text-align: center; padding: 10px; font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase; font-weight: 500; }
+
+    /* ── Nav ── */
+    #main-nav { background: #fff; border-bottom: 1px solid #e5e5e5; position: sticky; top: 0; z-index: 100; transition: box-shadow 0.3s; }
+    #main-nav.scrolled { box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
+    .nav-inner { display: flex; align-items: center; justify-content: space-between; padding: 0 20px; height: 60px; max-width: 1400px; margin: 0 auto; }
+    .nav-logo { font-size: 1.55rem; font-weight: 700; letter-spacing: 0.08em; color: #000; text-decoration: none; line-height: 1; }
+    .nav-icons { display: flex; align-items: center; gap: 18px; }
+    .nav-icons button, .nav-icons a { background: none; border: none; cursor: pointer; color: #000; display: flex; align-items: center; padding: 4px; position: relative; text-decoration: none; }
+    .nav-icons button:hover, .nav-icons a:hover { opacity: 0.6; }
+    .cart-badge { position: absolute; top: -4px; right: -4px; width: 16px; height: 16px; background: #000; color: #fff; border-radius: 50%; font-size: 0.55rem; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+    .ham-btn { display: none; }
+
+    /* ── Breadcrumb ── */
+    .breadcrumb { max-width: 1400px; margin: 0 auto; padding: 10px 20px; font-size: 0.65rem; color: #999; letter-spacing: 0.05em; }
+    .breadcrumb a { color: #999; text-decoration: none; }
+    .breadcrumb a:hover { color: #000; }
+    .breadcrumb span { margin: 0 5px; }
+
+    /* ── Page header ── */
+    .page-header { max-width: 1400px; margin: 0 auto; padding: 16px 20px 0; }
+    .page-title { font-size: 1.5rem; font-weight: 700; letter-spacing: 0.03em; color: #000; text-transform: uppercase; margin-bottom: 10px; }
+
+    /* ── Collection tabs ── */
+    .collection-tabs { display: flex; gap: 0; border-bottom: 1px solid #e5e5e5; margin: 0; padding: 0 20px; max-width: 1400px; margin: 0 auto; }
+    .col-tab { font-size: 0.72rem; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; color: #999; padding: 12px 0; margin-right: 24px; border-bottom: 2px solid transparent; cursor: pointer; background: none; border-top: none; border-left: none; border-right: none; transition: color 0.2s, border-color 0.2s; }
+    .col-tab.active { color: #000; border-bottom-color: #000; }
+    .col-tab:hover { color: #000; }
+
+    /* ── Filter/Sort bar ── */
+    .filter-bar { max-width: 1400px; margin: 0 auto; padding: 10px 20px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #e5e5e5; }
+    .filter-btn { font-size: 0.7rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; background: none; border: none; color: #000; display: flex; align-items: center; gap: 5px; }
+    .filter-btn:hover { opacity: 0.6; }
+    .sort-btn { font-size: 0.7rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; background: none; border: none; color: #000; display: flex; align-items: center; gap: 5px; }
+    .grid-toggle { display: flex; align-items: center; gap: 6px; }
+    .gt-btn { background: none; border: none; cursor: pointer; padding: 3px; color: #ccc; display: flex; }
+    .gt-btn.active, .gt-btn:hover { color: #000; }
+
+    /* ── Products main area ── */
+    .products-area { max-width: 1400px; margin: 0 auto; padding: 20px; }
+
+    /* ── Filter sidebar + grid layout ── */
+    .products-layout { display: flex; gap: 0; }
+    .filter-sidebar { width: 220px; min-width: 220px; padding-right: 24px; display: none; }
+    .filter-sidebar.open { display: block; }
+    .filter-group-title { font-size: 0.7rem; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; color: #000; padding: 14px 0 8px; border-bottom: 1px solid #e5e5e5; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+    .filter-option { font-size: 0.75rem; color: #555; padding: 6px 0; cursor: pointer; display: flex; align-items: center; gap: 8px; }
+    .filter-option:hover { color: #000; }
+    .filter-option input[type=checkbox] { accent-color: #000; width: 13px; height: 13px; }
+
+    /* ── Product grid ── */
+    #product-grid { flex: 1; display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px; }
+    #product-grid.cols-2 { grid-template-columns: repeat(2, 1fr); }
+    #product-grid.cols-3 { grid-template-columns: repeat(3, 1fr); }
+    #product-grid.cols-4 { grid-template-columns: repeat(4, 1fr); }
+    @media(max-width:1024px) { #product-grid.cols-4 { grid-template-columns: repeat(3, 1fr); } }
+    @media(max-width:768px)  { #product-grid { grid-template-columns: repeat(2, 1fr) !important; } .ham-btn { display: flex; } .desktop-nav { display: none !important; } }
+    @media(max-width:420px)  { #product-grid { grid-template-columns: repeat(1, 1fr) !important; } }
+
+    /* ── Product card ── */
+    .product-card { background: #fff; cursor: pointer; }
+    .product-card-inner { background: #f9f9f9; }
+    .product-img-wrap { position: relative; overflow: hidden; aspect-ratio: 3 / 4; background: #f2f2f2; }
+    .product-img-wrap img { width: 100%; height: 100%; object-fit: cover; object-position: top center; transition: transform 0.7s cubic-bezier(0.4,0,0.2,1); }
+    .product-card:hover .product-img-wrap img { transform: scale(1.04); }
+    .new-in-badge { position: absolute; top: 10px; right: 10px; font-size: 0.55rem; font-weight: 600; letter-spacing: 0.15em; color: #fff; background: #000; padding: 3px 7px; text-transform: uppercase; }
+    .sale-badge { position: absolute; top: 10px; left: 10px; font-size: 0.55rem; font-weight: 600; letter-spacing: 0.1em; color: #fff; background: #c00; padding: 3px 7px; text-transform: uppercase; }
+    .product-info { padding: 10px 2px 16px; }
+    .product-type { font-size: 0.6rem; font-weight: 600; letter-spacing: 0.1em; color: #000; text-transform: uppercase; margin-bottom: 2px; line-height: 1.4; }
+    .product-name { font-size: 0.65rem; font-weight: 400; color: #666; letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 2px; }
+    .product-collection { font-size: 0.6rem; color: #aaa; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 6px; }
+    .product-price { font-size: 0.75rem; font-weight: 600; color: #000; }
+    .product-price-old { font-size: 0.65rem; color: #aaa; text-decoration: line-through; margin-left: 6px; font-weight: 400; }
+
+    /* Hover overlay */
+    .product-hover { position: absolute; bottom: 0; left: 0; right: 0; background: #000; color: #fff; text-align: center; font-size: 0.65rem; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; padding: 11px; opacity: 0; transform: translateY(4px); transition: opacity 0.25s, transform 0.25s; }
+    .product-card:hover .product-hover { opacity: 1; transform: translateY(0); }
+
+    /* Wishlist icon */
+    .wish-btn { position: absolute; top: 10px; left: 10px; background: none; border: none; cursor: pointer; padding: 4px; z-index: 2; opacity: 0; transition: opacity 0.2s; }
+    .product-card:hover .wish-btn { opacity: 1; }
+    .wish-btn svg { width: 18px; height: 18px; fill: none; stroke: #fff; stroke-width: 1.5; filter: drop-shadow(0 1px 3px rgba(0,0,0,0.5)); transition: fill 0.2s; }
+    .wish-btn.liked svg { fill: #000; stroke: #000; filter: none; }
+
+    /* ── Colour swatches row ── */
+    .swatches { display: flex; gap: 4px; padding: 4px 2px 0; }
+    .swatch { width: 14px; height: 14px; border-radius: 50%; border: 1.5px solid #fff; outline: 1px solid #ccc; cursor: pointer; transition: outline-color 0.2s, transform 0.2s; }
+    .swatch:hover { outline-color: #000; transform: scale(1.15); }
+
+    /* ── Load more ── */
+    .load-more-wrap { text-align: center; padding: 40px 20px 60px; }
+    .btn-load { display: inline-block; border: 1px solid #000; padding: 14px 48px; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; cursor: pointer; background: #fff; color: #000; transition: background 0.25s, color 0.25s; }
+    .btn-load:hover { background: #000; color: #fff; }
+
+    /* ── Mobile filter drawer ── */
+    #filter-drawer { position: fixed; left: 0; top: 0; bottom: 0; width: 280px; background: #fff; z-index: 200; transform: translateX(-100%); transition: transform 0.35s cubic-bezier(0.4,0,0.2,1); border-right: 1px solid #e5e5e5; padding: 20px; overflow-y: auto; }
+    #filter-drawer.open { transform: translateX(0); }
+    #filter-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.3); z-index: 199; display: none; }
+    #filter-overlay.open { display: block; }
+    .drawer-close { position: absolute; top: 16px; right: 16px; background: none; border: none; cursor: pointer; font-size: 1.2rem; }
+
+    /* ── Mobile nav drawer ── */
+    #mobile-nav { position: fixed; left: 0; top: 0; bottom: 0; width: 280px; background: #fff; z-index: 200; transform: translateX(-100%); transition: transform 0.35s cubic-bezier(0.4,0,0.2,1); border-right: 1px solid #e5e5e5; padding: 20px; }
+    #mobile-nav.open { transform: translateX(0); }
+    .mob-nav-link { display: block; font-size: 0.85rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: #000; padding: 14px 0; border-bottom: 1px solid #f0f0f0; text-decoration: none; }
+    .mob-nav-link:hover { opacity: 0.6; }
+    #nav-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.3); z-index: 199; display: none; }
+    #nav-overlay.open { display: block; }
+
+    /* ── Toast ── */
+    #toast { position: fixed; bottom: 24px; right: 24px; z-index: 9000; background: #000; color: #fff; padding: 13px 22px; font-size: 0.7rem; font-weight: 500; letter-spacing: 0.08em; transform: translateY(10px); opacity: 0; pointer-events: none; transition: transform 0.3s, opacity 0.3s; }
+    #toast.show { transform: translateY(0); opacity: 1; }
+
+    /* ── Sort dropdown ── */
+    .sort-select { font-family: 'Montserrat', sans-serif; font-size: 0.7rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; border: none; background: none; cursor: pointer; color: #000; outline: none; }
+
+    /* ── Results count ── */
+    .results-count { font-size: 0.65rem; color: #999; letter-spacing: 0.05em; }
+
+    /* ── Desktop nav links ── */
+    .desktop-nav { display: flex; align-items: center; gap: 28px; }
+    .d-nav-link { font-size: 0.7rem; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: #333; text-decoration: none; transition: color 0.2s; }
+    .d-nav-link:hover { color: #000; }
+
+    /* ── Hero banner (homepage top) ── */
+    .hero-banner { background: #f9f9f9; border-bottom: 1px solid #e5e5e5; padding: 0; display: none; }
+
+    /* ── Scroll fade ── */
+    .fade-in { opacity: 0; transform: translateY(16px); transition: opacity 0.6s ease, transform 0.6s ease; }
+    .fade-in.visible { opacity: 1; transform: none; }
+
+    /* ── Filter active count badge ── */
+    .filter-count { display: inline-flex; align-items: center; justify-content: center; width: 16px; height: 16px; background: #000; color: #fff; border-radius: 50%; font-size: 0.55rem; font-weight: 700; margin-left: 5px; }
+
+    /* Active filter tags */
+    .active-filters { display: flex; flex-wrap: wrap; gap: 8px; padding: 10px 20px; max-width: 1400px; margin: 0 auto; }
+    .active-filter-tag { display: inline-flex; align-items: center; gap: 5px; font-size: 0.65rem; letter-spacing: 0.08em; border: 1px solid #000; padding: 4px 10px; cursor: pointer; }
+    .active-filter-tag:hover { background: #000; color: #fff; }
+
+    /* ── Promo strip ── */
+    .promo-strip { background: #fff; border-top: 1px solid #e5e5e5; border-bottom: 1px solid #e5e5e5; }
+    .marquee-wrap { overflow: hidden; }
+    .marquee-track { display: flex; gap: 3rem; white-space: nowrap; animation: marquee 25s linear infinite; }
+    @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+    /* ── About section ── */
+    .about-section { background: #000; color: #fff; }
+    .about-inner { max-width: 1400px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 0; }
+    @media(max-width: 768px) { .about-inner { grid-template-columns: 1fr; } }
+
+    /* ── Newsletter ── */
+    .newsletter { background: #f9f9f9; border-top: 1px solid #e5e5e5; padding: 60px 20px; text-align: center; }
+    .nl-title { font-size: 1.1rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 6px; }
+    .nl-sub { font-size: 0.75rem; color: #666; margin-bottom: 24px; letter-spacing: 0.05em; }
+    .nl-form { display: flex; gap: 0; max-width: 440px; margin: 0 auto; }
+    .nl-input { flex: 1; border: 1px solid #000; padding: 12px 16px; font-family: 'Montserrat', sans-serif; font-size: 0.75rem; outline: none; }
+    .nl-input::placeholder { color: #aaa; }
+    .nl-btn { background: #000; color: #fff; border: 1px solid #000; padding: 12px 22px; font-family: 'Montserrat', sans-serif; font-size: 0.65rem; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; cursor: pointer; white-space: nowrap; transition: background 0.2s, color 0.2s; }
+    .nl-btn:hover { background: #333; }
+
+    /* ── Footer ── */
+    footer { background: #fff; border-top: 1px solid #e5e5e5; }
+    .footer-inner { max-width: 1400px; margin: 0 auto; padding: 50px 20px 30px; display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px; }
+    @media(max-width: 768px) { .footer-inner { grid-template-columns: 1fr 1fr; gap: 30px; } }
+    @media(max-width: 480px) { .footer-inner { grid-template-columns: 1fr; } }
+    .footer-logo { font-size: 1.3rem; font-weight: 700; letter-spacing: 0.1em; color: #000; margin-bottom: 12px; }
+    .footer-desc { font-size: 0.72rem; color: #666; line-height: 1.7; max-width: 220px; }
+    .footer-heading { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: #000; margin-bottom: 16px; }
+    .footer-link { display: block; font-size: 0.72rem; color: #666; text-decoration: none; margin-bottom: 8px; letter-spacing: 0.03em; }
+    .footer-link:hover { color: #000; }
+    .footer-bottom { max-width: 1400px; margin: 0 auto; padding: 16px 20px; border-top: 1px solid #e5e5e5; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+    .footer-copy { font-size: 0.65rem; color: #aaa; letter-spacing: 0.05em; }
+    .footer-pay { display: flex; gap: 8px; }
+    .pay-badge { font-size: 0.6rem; border: 1px solid #ddd; padding: 3px 8px; color: #666; }
+    .social-row { display: flex; gap: 12px; margin-top: 20px; }
+    .social-icon { width: 32px; height: 32px; border: 1px solid #000; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: background 0.2s; }
+    .social-icon:hover { background: #000; }
+    .social-icon:hover svg { stroke: #fff; }
+    .social-icon svg { width: 14px; height: 14px; fill: none; stroke: #000; stroke-width: 1.5; }
+
+    /* ── Page loader ── */
+    #page-loader { position: fixed; inset: 0; z-index: 9999; background: #fff; display: flex; align-items: center; justify-content: center; transition: opacity 0.5s, visibility 0.5s; }
+    #page-loader.hidden { opacity: 0; visibility: hidden; }
+    .loader-logo-text { font-size: 2rem; font-weight: 700; letter-spacing: 0.5em; color: #000; animation: pulse-logo 1.2s ease-in-out infinite; }
+    @keyframes pulse-logo { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+    .loader-bar { width: 0; height: 1px; background: #000; animation: grow-bar 1.2s ease-in-out infinite; margin-top: 12px; }
+    @keyframes grow-bar { 0% { width:0; opacity:0; } 50% { width:80px; opacity:1; } 100% { width:0; opacity:0; } }
+
+    /* ── Responsive adjustments ── */
+    @media(max-width:768px) {
+      .filter-bar { flex-wrap: wrap; gap: 10px; }
+      .nl-form { flex-direction: column; }
+      .nl-btn { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Page Loader -->
+<div id="page-loader">
+  <div style="text-align:center;">
+    <div class="loader-logo-text">figs.pk</div>
+    <div class="loader-bar" style="margin:12px auto 0;"></div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toast">Item added to bag</div>
+
+<!-- Mobile Nav Overlay -->
+<div id="nav-overlay" onclick="closeMobileNav()"></div>
+<nav id="mobile-nav" aria-label="Mobile navigation">
+  <button class="drawer-close" onclick="closeMobileNav()" aria-label="Close menu">✕</button>
+  <div style="margin-top:40px;">
+    <div style="font-size:1.1rem;font-weight:700;letter-spacing:0.15em;margin-bottom:24px;">figs.pk</div>
+    <a class="mob-nav-link" href="#">New Arrivals</a>
+    <a class="mob-nav-link" href="#products">Collections</a>
+    <a class="mob-nav-link" href="#products">Shop All</a>
+    <a class="mob-nav-link" href="#about">Our Story</a>
+    <a class="mob-nav-link" href="#">Contact</a>
+  </div>
+</nav>
+
+<!-- Filter Drawer Overlay -->
+<div id="filter-overlay" onclick="closeFilter()"></div>
+<aside id="filter-drawer" aria-label="Filters">
+  <button class="drawer-close" onclick="closeFilter()" aria-label="Close filters">✕</button>
+  <div style="margin-top:36px;">
+    <div style="font-size:0.65rem;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;margin-bottom:20px;border-bottom:1px solid #e5e5e5;padding-bottom:12px;">Filters</div>
+
+    <div class="filter-group-title">Category <span>+</span></div>
+    <label class="filter-option"><input type="checkbox" onchange="applyFilter()"> Embroidered</label>
+    <label class="filter-option"><input type="checkbox" onchange="applyFilter()"> Printed</label>
+    <label class="filter-option"><input type="checkbox" onchange="applyFilter()"> Plain Luxury</label>
+    <label class="filter-option"><input type="checkbox" onchange="applyFilter()"> Winter Specials</label>
+
+    <div class="filter-group-title" style="margin-top:16px;">Price Range <span>+</span></div>
+    <label class="filter-option"><input type="checkbox"> Under Rs.5,000</label>
+    <label class="filter-option"><input type="checkbox"> Rs.5,000 – Rs.10,000</label>
+    <label class="filter-option"><input type="checkbox"> Rs.10,000 – Rs.20,000</label>
+    <label class="filter-option"><input type="checkbox"> Above Rs.20,000</label>
+
+    <div class="filter-group-title" style="margin-top:16px;">Fabric <span>+</span></div>
+    <label class="filter-option"><input type="checkbox"> Khaddar</label>
+    <label class="filter-option"><input type="checkbox"> Chiffon</label>
+    <label class="filter-option"><input type="checkbox"> Velvet</label>
+    <label class="filter-option"><input type="checkbox"> Lawn</label>
+
+    <div style="margin-top:28px;">
+      <button onclick="clearFilters()" style="width:100%;border:1px solid #000;padding:12px;font-family:'Montserrat',sans-serif;font-size:0.65rem;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;background:#000;color:#fff;cursor:pointer;">Apply Filters</button>
+    </div>
+  </div>
+</aside>
+
+<!-- ═══════════════════════════════════════════════
+     ANNOUNCEMENT BAR
+════════════════════════════════════════════════ -->
+<div class="ann-bar" role="marquee">
+  FREE SHIPPING ON ORDERS ABOVE PKR 5,000 &nbsp;|&nbsp; WINTER '26 NOW LIVE &nbsp;|&nbsp; USE CODE FIGS10 FOR 10% OFF
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     NAVIGATION
+════════════════════════════════════════════════ -->
+<header id="main-nav">
+  <div class="nav-inner">
+
+    <!-- Left: Hamburger (mobile) + Desktop Nav -->
+    <div style="display:flex;align-items:center;gap:20px;">
+      <button class="ham-btn" onclick="openMobileNav()" aria-label="Open menu" aria-expanded="false">
+        <svg width="22" height="16" viewBox="0 0 22 16" fill="none" stroke="currentColor" stroke-width="1.6">
+          <line x1="0" y1="2" x2="22" y2="2"/>
+          <line x1="0" y1="8" x2="22" y2="8"/>
+          <line x1="0" y1="14" x2="22" y2="14"/>
+        </svg>
+      </button>
+
+      <!-- Desktop nav — left of logo -->
+      <nav class="desktop-nav" aria-label="Primary navigation">
+        <a class="d-nav-link" href="#">New Arrivals</a>
+        <a class="d-nav-link" href="#products">Collections</a>
+        <a class="d-nav-link" href="#products">Shop All</a>
+      </nav>
+    </div>
+
+    <!-- Logo — center -->
+    <a class="nav-logo" href="#" aria-label="figs.pk Home" style="position:absolute;left:50%;transform:translateX(-50%);">figs.pk</a>
+
+    <!-- Right: icons -->
+    <div class="nav-icons">
+      <button aria-label="Search">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+      </button>
+      <a href="#" aria-label="Account" class="desktop-nav">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      </a>
+      <button aria-label="Shopping bag" onclick="openCart()" style="position:relative;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+        <span id="cart-badge" class="cart-badge" style="display:none;">0</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- ═══════════════════════════════════════════════
+     BREADCRUMB
+════════════════════════════════════════════════ -->
+<nav aria-label="Breadcrumb">
+  <div class="breadcrumb">
+    <a href="#">Home</a><span>›</span>
+    <a href="#">Women</a><span>›</span>
+    <a href="#">Unstitched</a><span>›</span>
+    <span style="color:#222;">Winter '26</span>
+  </div>
+</nav>
+
+<!-- ═══════════════════════════════════════════════
+     PAGE HEADER
+════════════════════════════════════════════════ -->
+<div class="page-header">
+  <h1 class="page-title">Winter '26</h1>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     COLLECTION TABS (SUKOON | ANDAAZ | RAUNAK style)
+════════════════════════════════════════════════ -->
+<div class="collection-tabs" role="tablist" aria-label="Collections">
+  <button class="col-tab active" role="tab" aria-selected="true"  onclick="switchTab(this,'all')">All</button>
+  <button class="col-tab"        role="tab" aria-selected="false" onclick="switchTab(this,'embroidered')">Embroidered</button>
+  <button class="col-tab"        role="tab" aria-selected="false" onclick="switchTab(this,'printed')">Printed</button>
+  <button class="col-tab"        role="tab" aria-selected="false" onclick="switchTab(this,'plain')">Plain Luxury</button>
+  <button class="col-tab"        role="tab" aria-selected="false" onclick="switchTab(this,'winter')">Winter</button>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     FILTER / SORT BAR
+════════════════════════════════════════════════ -->
+<div class="filter-bar">
+  <div style="display:flex;align-items:center;gap:20px;">
+    <button class="filter-btn" onclick="toggleFilter()" aria-expanded="false" id="filter-toggle-btn">
+      Filter +
+    </button>
+    <span class="results-count" id="results-count">14 Products</span>
+  </div>
+
+  <div style="display:flex;align-items:center;gap:16px;">
+    <!-- Grid density toggles -->
+    <div class="grid-toggle" aria-label="Grid density">
+      <button class="gt-btn" onclick="setGrid(2)" title="2 columns" aria-label="2 column view">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+          <rect x="0" y="0" width="7" height="7"/><rect x="9" y="0" width="7" height="7"/>
+          <rect x="0" y="9" width="7" height="7"/><rect x="9" y="9" width="7" height="7"/>
+        </svg>
+      </button>
+      <button class="gt-btn" onclick="setGrid(3)" title="3 columns" aria-label="3 column view">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+          <rect x="0" y="0" width="4" height="7"/><rect x="6" y="0" width="4" height="7"/><rect x="12" y="0" width="4" height="7"/>
+          <rect x="0" y="9" width="4" height="7"/><rect x="6" y="9" width="4" height="7"/><rect x="12" y="9" width="4" height="7"/>
+        </svg>
+      </button>
+      <button class="gt-btn active" onclick="setGrid(4)" title="4 columns" aria-label="4 column view">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+          <rect x="0" y="0" width="2.5" height="7"/><rect x="4.5" y="0" width="2.5" height="7"/><rect x="9" y="0" width="2.5" height="7"/><rect x="13.5" y="0" width="2.5" height="7"/>
+          <rect x="0" y="9" width="2.5" height="7"/><rect x="4.5" y="9" width="2.5" height="7"/><rect x="9" y="9" width="2.5" height="7"/><rect x="13.5" y="9" width="2.5" height="7"/>
+        </svg>
+      </button>
+    </div>
+    <div style="width:1px;height:16px;background:#e5e5e5;"></div>
+    <label class="sr-only" for="sort-select">Sort products</label>
+    <select id="sort-select" class="sort-select" onchange="sortProducts(this.value)" aria-label="Sort products">
+      <option value="featured">Sort</option>
+      <option value="newest">Newest</option>
+      <option value="price-asc">Price: Low–High</option>
+      <option value="price-desc">Price: High–Low</option>
+    </select>
+  </div>
+</div>
+
+<!-- Active filter tags (dynamic) -->
+<div class="active-filters" id="active-filters" style="display:none;"></div>
+
+<!-- ═══════════════════════════════════════════════
+     PRODUCTS
+════════════════════════════════════════════════ -->
+<main id="products">
+  <div class="products-area">
+    <div class="products-layout">
+
+      <!-- Sidebar filters (desktop, when open) -->
+      <aside class="filter-sidebar" id="desktop-sidebar" aria-label="Product filters">
+        <div>
+          <div class="filter-group-title">Category <span>+</span></div>
+          <label class="filter-option"><input type="checkbox" data-filter="embroidered" onchange="applyDesktopFilter()"> Embroidered</label>
+          <label class="filter-option"><input type="checkbox" data-filter="printed" onchange="applyDesktopFilter()"> Printed</label>
+          <label class="filter-option"><input type="checkbox" data-filter="plain" onchange="applyDesktopFilter()"> Plain Luxury</label>
+          <label class="filter-option"><input type="checkbox" data-filter="winter" onchange="applyDesktopFilter()"> Winter Specials</label>
+
+          <div class="filter-group-title" style="margin-top:16px;">Price Range <span>+</span></div>
+          <label class="filter-option"><input type="checkbox"> Under Rs.5,000</label>
+          <label class="filter-option"><input type="checkbox"> Rs.5,000 – Rs.10,000</label>
+          <label class="filter-option"><input type="checkbox"> Rs.10,000+</label>
+
+          <div class="filter-group-title" style="margin-top:16px;">Fabric <span>+</span></div>
+          <label class="filter-option"><input type="checkbox"> Khaddar</label>
+          <label class="filter-option"><input type="checkbox"> Chiffon</label>
+          <label class="filter-option"><input type="checkbox"> Velvet</label>
+        </div>
+      </aside>
+
+      <!-- Product Grid -->
+      <div id="product-grid" class="cols-4" role="list">
+
+        <!-- ── PRODUCT 1 ── -->
+        <article class="product-card fade-in" data-category="printed" data-price="6490" role="listitem">
+          <div class="product-img-wrap product-card-inner">
+            <img src="WhatsApp Image 2026-11-11 at 1.44.07 AM.jpeg" alt="3 Piece — Printed & Embroidered Luxury Khaddar Suit" loading="lazy" />
+            <span class="new-in-badge">New In</span>
+            <button class="wish-btn" aria-label="Add to wishlist" onclick="toggleWish(this); event.stopPropagation();">
+              <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+            </button>
+            <div class="product-hover" role="button" tabindex="0" onclick="addToCart('Teal Opulence','6,490')" onkeydown="if(event.key==='Enter')addToCart('Teal Opulence','6,490')">Add to Bag</div>
+          </div>
+          <div class="product-info">
+            <div class="product-type">3 Piece — Printed & Embroidered Luxury Khaddar Suit</div>
+            <div class="product-collection">Unstitched Winter '26</div>
+            <div>
+              <span class="product-price">Rs.6,490</span>
+            </div>
+            <div class="swatches">
+              <div class="swatch" style="background:#1a434e;" title="Deep Teal"></div>
+              <div class="swatch" style="background:#d07f35;" title="Rust Amber"></div>
+              <div class="swatch" style="background:#112328;" title="Dark Spruce"></div>
+            </div>
+          </div>
+        </article>
+
+        <!-- ── PRODUCT 2 ── -->
+        <article class="product-card fade-in" data-category="winter" data-price="7890" role="listitem">
+          <div class="product-img-wrap product-card-inner">
+            <img src="WhatsApp Image 2026-11-11 at 1.44.26 AM.jpeg" alt="3 Piece — Woven Jacquard Shawl & Khaddar Suit" loading="lazy" />
+            <span class="new-in-badge">New In</span>
+            <button class="wish-btn" aria-label="Add to wishlist" onclick="toggleWish(this); event.stopPropagation();">
+              <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+            </button>
+            <div class="product-hover" role="button" tabindex="0" onclick="addToCart('Plum Majesty','7,890')" onkeydown="if(event.key==='Enter')addToCart('Plum Majesty','7,890')">Add to Bag</div>
+          </div>
+          <div class="product-info">
+            <div class="product-type">3 Piece — Woven Jacquard Shawl & Khaddar Suit</div>
+            <div class="product-collection">Unstitched Winter '26</div>
+            <div>
+              <span class="product-price">Rs.7,890</span>
+            </div>
+            <div class="swatches">
+              <div class="swatch" style="background:#44223b;" title="Plum"></div>
+              <div class="swatch" style="background:#bfa168;" title="Antique Gold"></div>
+            </div>
+          </div>
+        </article>
+
+        <!-- ── PRODUCT 3 ── -->
+        <article class="product-card fade-in" data-category="embroidered" data-price="6990" role="listitem">
+          <div class="product-img-wrap product-card-inner">
+            <img src="WhatsApp Image 2026-11-11 at 1.44.45 AM.jpeg" alt="3 Piece — Embroidered Multi-Floral Khaddar Suit" loading="lazy" />
+            <span class="new-in-badge">New In</span>
+            <button class="wish-btn" aria-label="Add to wishlist" onclick="toggleWish(this); event.stopPropagation();">
+              <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+            </button>
+            <div class="product-hover" role="button" tabindex="0" onclick="addToCart('Crimson Floret','6,990')" onkeydown="if(event.key==='Enter')addToCart('Crimson Floret','6,990')">Add to Bag</div>
+          </div>
+          <div class="product-info">
+            <div class="product-type">3 Piece — Embroidered Multi-Floral Khaddar Suit</div>
+            <div class="product-collection">Unstitched Winter '26</div>
+            <div>
+              <span class="product-price">Rs.6,990</span>
+            </div>
+            <div class="swatches">
+              <div class="swatch" style="background:#6f1a26;" title="Crimson"></div>
+              <div class="swatch" style="background:#e39c36;" title="Mustard Gold"></div>
+              <div class="swatch" style="background:#567c9c;" title="Dusk Blue"></div>
+            </div>
+          </div>
+        </article>
+
+        <!-- ── PRODUCT 4 ── -->
+        <article class="product-card fade-in" data-category="printed" data-price="5490" role="listitem">
+          <div class="product-img-wrap product-card-inner">
+            <img src="WhatsApp Image 2026-11-11 at 1.45.00 AM.jpeg" alt="3 Piece — Embroidered Winter Linen Suit" loading="lazy" />
+            <span class="new-in-badge">New In</span>
+            <button class="wish-btn" aria-label="Add to wishlist" onclick="toggleWish(this); event.stopPropagation();">
+              <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+            </button>
+            <div class="product-hover" role="button" tabindex="0" onclick="addToCart('Chartreuse Blossom','5,490')" onkeydown="if(event.key==='Enter')addToCart('Chartreuse Blossom','5,490')">Add to Bag</div>
+          </div>
+          <div class="product-info">
+            <div class="product-type">3 Piece — Embroidered Winter Linen Suit</div>
+            <div class="product-collection">Unstitched Winter '26</div>
+            <div>
+              <span class="product-price">Rs.5,490</span>
+            </div>
+            <div class="swatches">
+              <div class="swatch" style="background:#899238;" title="Chartreuse Olive"></div>
+              <div class="swatch" style="background:#be2757;" title="Berry Magenta"></div>
+            </div>
+          </div>
+        </article>
+
+        <!-- ── PRODUCT 5 ── -->
+        <article class="product-card fade-in" data-category="plain" data-price="7290" role="listitem">
+          <div class="product-img-wrap product-card-inner">
+            <img src="WhatsApp Image 2026-11-11 at 1.45.14 AM.jpeg" alt="3 Piece — Luxury Embroidered Monochromatic Suit" loading="lazy" />
+            <span class="new-in-badge">New In</span>
+            <button class="wish-btn" aria-label="Add to wishlist" onclick="toggleWish(this); event.stopPropagation();">
+              <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+            </button>
+            <div class="product-hover" role="button" tabindex="0" onclick="addToCart('Noir Kashmiri','7,290')" onkeydown="if(event.key==='Enter')addToCart('Noir Kashmiri','7,290')">Add to Bag</div>
+          </div>
+          <div class="product-info">
+            <div class="product-type">3 Piece — Luxury Embroidered Monochromatic Suit</div>
+            <div class="product-collection">Unstitched Winter '26</div>
+            <div>
+              <span class="product-price">Rs.7,290</span>
+            </div>
+            <div class="swatches">
+              <div class="swatch" style="background:#181818;" title="Jet Black"></div>
+              <div class="swatch" style="background:#f2ede4;" title="Ivory White"></div>
+            </div>
+          </div>
+        </article>
+
+        <!-- ── PRODUCT 6 ── -->
+        <article class="product-card fade-in" data-category="winter" data-price="8990" role="listitem">
+          <div class="product-img-wrap product-card-inner">
+            <img src="WhatsApp Image 2026-11-11 at 1.45.27 AM.jpeg" alt="3 Piece — Festive Zari Embroidered Suit" loading="lazy" />
+            <span class="new-in-badge">New In</span>
+            <button class="wish-btn" aria-label="Add to wishlist" onclick="toggleWish(this); event.stopPropagation();">
+              <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+            </button>
+            <div class="product-hover" role="button" tabindex="0" onclick="addToCart('Garnet Zari','8,990')" onkeydown="if(event.key==='Enter')addToCart('Garnet Zari','8,990')">Add to Bag</div>
+          </div>
+          <div class="product-info">
+            <div class="product-type">3 Piece — Festive Zari Embroidered Suit</div>
+            <div class="product-collection">Unstitched Winter '26</div>
+            <div>
+              <span class="product-price">Rs.8,990</span>
+            </div>
+            <div class="swatches">
+              <div class="swatch" style="background:#531522;" title="Deep Garnet"></div>
+              <div class="swatch" style="background:#caa55d;" title="Gold Booti"></div>
+            </div>
+          </div>
+        </article>
+
+        <!-- ── PRODUCT 7 ── -->
+        <article class="product-card fade-in" data-category="embroidered" data-price="9490" role="listitem">
+          <div class="product-img-wrap product-card-inner">
+            <img src="WhatsApp Image 2026-11-11 at 1.46.10 AM.jpeg" alt="3 Piece — Embroidered Festive Silk & Chiffon Suit" loading="lazy" />
+            <span class="new-in-badge">New In</span>
+            <span class="sale-badge">Sale</span>
+            <button class="wish-btn" aria-label="Add to wishlist" onclick="toggleWish(this); event.stopPropagation();">
+              <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+            </button>
+            <div class="product-hover" role="button" tabindex="0" onclick="addToCart('Royal Azure','9,490')" onkeydown="if(event.key==='Enter')addToCart('Royal Azure','9,490')">Add to Bag</div>
+          </div>
+          <div class="product-info">
+            <div class="product-type">3 Piece — Embroidered Festive Silk & Chiffon Suit</div>
+            <div class="product-collection">Unstitched Winter '26</div>
+            <div>
+              <span class="product-price">Rs.9,490</span>
+              <span class="product-price-old">Rs.12,990</span>
+            </div>
+            <div class="swatches">
+              <div class="swatch" style="background:#1f349c;" title="Royal Cobalt"></div>
+              <div class="swatch" style="background:#9e237c;" title="Magenta"></div>
+              <div class="swatch" style="background:#cca65b;" title="Zari Gold"></div>
+            </div>
+          </div>
+        </article>
+
+        <!-- ── PRODUCT 8 ── -->
+        <article class="product-card fade-in" data-category="printed" data-price="4850" role="listitem">
+          <div class="product-img-wrap product-card-inner">
+            <img src="WhatsApp Image 2026-11-11 at 1.44.07 AM.jpeg" alt="2 Piece — Printed Khaddar Shirt & Shawl" loading="lazy" />
+            <span class="new-in-badge">New In</span>
+            <button class="wish-btn" aria-label="Add to wishlist" onclick="toggleWish(this); event.stopPropagation();">
+              <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+            </button>
+            <div class="product-hover" role="button" tabindex="0" onclick="addToCart('Emerald Noor','4,850')" onkeydown="if(event.key==='Enter')addToCart('Emerald Noor','4,850')">Add to Bag</div>
+          </div>
+          <div class="product-info">
+            <div class="product-type">2 Piece — Printed Khaddar Shirt & Shawl</div>
+            <div class="product-collection">Unstitched Winter '26</div>
+            <div>
+              <span class="product-price">Rs.4,850</span>
+            </div>
+            <div class="swatches">
+              <div class="swatch" style="background:#1a434e;" title="Deep Teal"></div>
+              <div class="swatch" style="background:#c27a38;" title="Amber"></div>
+            </div>
+          </div>
+        </article>
+
+        <!-- ── PRODUCT 9 ── -->
+        <article class="product-card fade-in" data-category="winter" data-price="8450" role="listitem">
+          <div class="product-img-wrap product-card-inner">
+            <img src="WhatsApp Image 2026-11-11 at 1.44.26 AM.jpeg" alt="3 Piece — Jacquard Stripe Woolen Blend Suit" loading="lazy" />
+            <span class="new-in-badge">New In</span>
+            <button class="wish-btn" aria-label="Add to wishlist" onclick="toggleWish(this); event.stopPropagation();">
+              <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+            </button>
+            <div class="product-hover" role="button" tabindex="0" onclick="addToCart('Aubergine Luxe','8,450')" onkeydown="if(event.key==='Enter')addToCart('Aubergine Luxe','8,450')">Add to Bag</div>
+          </div>
+          <div class="product-info">
+            <div class="product-type">3 Piece — Jacquard Stripe Woolen Blend Suit</div>
+            <div class="product-collection">Unstitched Winter '26</div>
+            <div>
+              <span class="product-price">Rs.8,450</span>
+            </div>
+            <div class="swatches">
+              <div class="swatch" style="background:#3c1b34;" title="Aubergine"></div>
+              <div class="swatch" style="background:#caa365;" title="Zari Gold"></div>
+            </div>
+          </div>
+        </article>
+
+        <!-- ── PRODUCT 10 ── -->
+        <article class="product-card fade-in" data-category="embroidered" data-price="7650" role="listitem">
+          <div class="product-img-wrap product-card-inner">
+            <img src="WhatsApp Image 2026-11-11 at 1.44.45 AM.jpeg" alt="3 Piece — Hand-Embroidered Karandi Suit" loading="lazy" />
+            <span class="new-in-badge">New In</span>
+            <button class="wish-btn" aria-label="Add to wishlist" onclick="toggleWish(this); event.stopPropagation();">
+              <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+            </button>
+            <div class="product-hover" role="button" tabindex="0" onclick="addToCart('Scarlet Garden','7,650')" onkeydown="if(event.key==='Enter')addToCart('Scarlet Garden','7,650')">Add to Bag</div>
+          </div>
+          <div class="product-info">
+            <div class="product-type">3 Piece — Hand-Embroidered Karandi Suit</div>
+            <div class="product-collection">Unstitched Winter '26</div>
+            <div>
+              <span class="product-price">Rs.7,650</span>
+            </div>
+            <div class="swatches">
+              <div class="swatch" style="background:#5e131d;" title="Deep Maroon"></div>
+              <div class="swatch" style="background:#e5a242;" title="Marigold"></div>
+              <div class="swatch" style="background:#386687;" title="Teal Blue"></div>
+            </div>
+          </div>
+        </article>
+
+        <!-- ── PRODUCT 11 ── -->
+        <article class="product-card fade-in" data-category="plain" data-price="4290" role="listitem">
+          <div class="product-img-wrap product-card-inner">
+            <img src="WhatsApp Image 2026-11-11 at 1.45.00 AM.jpeg" alt="2 Piece — Embroidered Lawn Linen Kurta Set" loading="lazy" />
+            <span class="new-in-badge">New In</span>
+            <button class="wish-btn" aria-label="Add to wishlist" onclick="toggleWish(this); event.stopPropagation();">
+              <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+            </button>
+            <div class="product-hover" role="button" tabindex="0" onclick="addToCart('Citron Mirage','4,290')" onkeydown="if(event.key==='Enter')addToCart('Citron Mirage','4,290')">Add to Bag</div>
+          </div>
+          <div class="product-info">
+            <div class="product-type">2 Piece — Embroidered Lawn Linen Kurta Set</div>
+            <div class="product-collection">Unstitched Winter '26</div>
+            <div>
+              <span class="product-price">Rs.4,290</span>
+            </div>
+            <div class="swatches">
+              <div class="swatch" style="background:#9ba242;" title="Citron Olive"></div>
+              <div class="swatch" style="background:#9b1e4a;" title="Berry"></div>
+            </div>
+          </div>
+        </article>
+
+        <!-- ── PRODUCT 12 ── -->
+        <article class="product-card fade-in" data-category="winter" data-price="11990" role="listitem">
+          <div class="product-img-wrap product-card-inner">
+            <img src="WhatsApp Image 2026-11-11 at 1.45.14 AM.jpeg" alt="3 Piece — Hand-Embroidered Velvet & Organza Suit" loading="lazy" />
+            <span class="new-in-badge">New In</span>
+            <span class="sale-badge">Sale</span>
+            <button class="wish-btn" aria-label="Add to wishlist" onclick="toggleWish(this); event.stopPropagation();">
+              <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+            </button>
+            <div class="product-hover" role="button" tabindex="0" onclick="addToCart('Midnight Chikankari','11,990')" onkeydown="if(event.key==='Enter')addToCart('Midnight Chikankari','11,990')">Add to Bag</div>
+          </div>
+          <div class="product-info">
+            <div class="product-type">3 Piece — Hand-Embroidered Velvet & Organza Suit</div>
+            <div class="product-collection">Unstitched Winter '26</div>
+            <div>
+              <span class="product-price">Rs.11,990</span>
+              <span class="product-price-old">Rs.14,500</span>
+            </div>
+            <div class="swatches">
+              <div class="swatch" style="background:#0e0e0e;" title="Midnight Noir"></div>
+              <div class="swatch" style="background:#e8e4dc;" title="Cream White"></div>
+            </div>
+          </div>
+        </article>
+
+        <!-- ── PRODUCT 13 ── -->
+        <article class="product-card fade-in" data-category="embroidered" data-price="7990" role="listitem">
+          <div class="product-img-wrap product-card-inner">
+            <img src="WhatsApp Image 2026-11-11 at 1.45.27 AM.jpeg" alt="3 Piece — Embellished Chiffon Festive Suit" loading="lazy" />
+            <span class="new-in-badge">New In</span>
+            <button class="wish-btn" aria-label="Add to wishlist" onclick="toggleWish(this); event.stopPropagation();">
+              <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+            </button>
+            <div class="product-hover" role="button" tabindex="0" onclick="addToCart('Maroon Brocade','7,990')" onkeydown="if(event.key==='Enter')addToCart('Maroon Brocade','7,990')">Add to Bag</div>
+          </div>
+          <div class="product-info">
+            <div class="product-type">3 Piece — Embellished Chiffon Festive Suit</div>
+            <div class="product-collection">Unstitched Winter '26</div>
+            <div>
+              <span class="product-price">Rs.7,990</span>
+            </div>
+            <div class="swatches">
+              <div class="swatch" style="background:#4b111e;" title="Dark Garnet"></div>
+              <div class="swatch" style="background:#dfba6a;" title="Gold Polka"></div>
+            </div>
+          </div>
+        </article>
+
+        <!-- ── PRODUCT 14 ── -->
+        <article class="product-card fade-in" data-category="plain" data-price="10500" role="listitem">
+          <div class="product-img-wrap product-card-inner">
+            <img src="WhatsApp Image 2026-11-11 at 1.46.10 AM.jpeg" alt="3 Piece — Ombre Organza & Raw Silk Festive Suit" loading="lazy" />
+            <span class="new-in-badge">New In</span>
+            <button class="wish-btn" aria-label="Add to wishlist" onclick="toggleWish(this); event.stopPropagation();">
+              <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+            </button>
+            <div class="product-hover" role="button" tabindex="0" onclick="addToCart('Cobalt Radiance','10,500')" onkeydown="if(event.key==='Enter')addToCart('Cobalt Radiance','10,500')">Add to Bag</div>
+          </div>
+          <div class="product-info">
+            <div class="product-type">3 Piece — Ombre Organza & Raw Silk Festive Suit</div>
+            <div class="product-collection">Unstitched Winter '26</div>
+            <div>
+              <span class="product-price">Rs.10,500</span>
+            </div>
+            <div class="swatches">
+              <div class="swatch" style="background:#182c87;" title="Cobalt"></div>
+              <div class="swatch" style="background:#8b1d6c;" title="Magenta Glow"></div>
+            </div>
+          </div>
+        </article>
+
+      </div><!-- /product-grid -->
+    </div><!-- /products-layout -->
+  </div><!-- /products-area -->
+</main>
+
+<!-- ── Load More ── -->
+<div class="load-more-wrap fade-in">
+  <button class="btn-load" onclick="loadMore()">Load More</button>
+</div>
+
+
+
+<!-- ═══════════════════════════════════════════════
+     ABOUT STRIP (black band)
+════════════════════════════════════════════════ -->
+<section class="about-section" id="about">
+  <div class="about-inner">
+    <div style="padding:80px 60px 80px 60px;">
+      <div style="font-size:0.65rem;font-weight:600;letter-spacing:0.25em;text-transform:uppercase;color:#999;margin-bottom:16px;">Our Heritage</div>
+      <h2 style="font-size:2rem;font-weight:700;letter-spacing:0.03em;line-height:1.15;margin-bottom:20px;">figs.pk — Crafted<br/>for the Discerning<br/>Woman.</h2>
+      <p style="font-size:0.8rem;color:#aaa;line-height:1.9;max-width:360px;margin-bottom:32px;">
+        Since 2012, figs.pk has stood for uncompromising quality in unstitched luxury fabric. Each piece is a testament to our dedication to preserving the finest craft traditions of South Asia — woven into designs for the contemporary woman.
+      </p>
+      <a href="#products" style="display:inline-block;border:1px solid #fff;padding:12px 32px;font-size:0.65rem;font-weight:600;letter-spacing:0.2em;text-transform:uppercase;color:#fff;text-decoration:none;transition:background 0.2s,color 0.2s;" onmouseover="this.style.background='#fff';this.style.color='#000'" onmouseout="this.style.background='transparent';this.style.color='#fff'">
+        Shop Collection
+      </a>
+    </div>
+    <div style="position:relative;overflow:hidden;">
+      <img src="WhatsApp Image 2026-11-11 at 1.46.10 AM.jpeg" alt="figs.pk craftsmanship" style="width:100%;height:100%;object-fit:cover;object-position:top;display:block;filter:grayscale(20%);" />
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════
+     NEWSLETTER
+════════════════════════════════════════════════ -->
+<section class="newsletter fade-in">
+  <div style="max-width:480px;margin:0 auto;">
+    <div class="nl-title">Join the figs.pk Circle</div>
+    <p class="nl-sub">Be first to know about new arrivals, exclusive offers & style inspiration.</p>
+    <form class="nl-form" onsubmit="subscribeNL(event)">
+      <label class="sr-only" for="nl-email">Email address</label>
+      <input id="nl-email" type="email" class="nl-input" placeholder="Enter your email" required autocomplete="email" />
+      <button type="submit" class="nl-btn">Subscribe</button>
+    </form>
+    <p style="margin-top:12px;font-size:0.6rem;color:#aaa;letter-spacing:0.05em;">No spam. Unsubscribe anytime.</p>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════
+     FOOTER
+════════════════════════════════════════════════ -->
+<footer>
+  <div class="footer-inner">
+
+    <!-- Brand -->
+    <div>
+      <div class="footer-logo">figs.pk</div>
+      <p class="footer-desc">Premium unstitched luxury fabric — crafted for the woman who knows her worth. Since 2012.</p>
+      <div class="social-row">
+        <a class="social-icon" href="#" aria-label="Instagram">
+          <svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+        </a>
+        <a class="social-icon" href="#" aria-label="Facebook">
+          <svg viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/></svg>
+        </a>
+        <a class="social-icon" href="#" aria-label="Pinterest">
+          <svg viewBox="0 0 24 24"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.236 2.636 7.855 6.356 9.312-.088-.791-.167-2.005.035-2.868.181-.78 1.172-4.97 1.172-4.97s-.299-.598-.299-1.482c0-1.388.806-2.428 1.808-2.428.853 0 1.267.641 1.267 1.408 0 .858-.546 2.14-.828 3.33-.236.995.499 1.806 1.476 1.806 1.771 0 3.132-1.867 3.132-4.562 0-2.387-1.715-4.056-4.164-4.056-2.838 0-4.503 2.129-4.503 4.33 0 .857.33 1.776.741 2.278a.3.3 0 01.069.284c-.075.313-.244.995-.277 1.134-.044.183-.146.222-.338.134-1.249-.581-2.03-2.407-2.03-3.874 0-3.154 2.292-6.052 6.608-6.052 3.469 0 6.165 2.473 6.165 5.776 0 3.447-2.173 6.22-5.19 6.22-1.013 0-1.966-.527-2.292-1.148l-.623 2.378c-.226.869-.835 1.958-1.244 2.621.937.29 1.931.446 2.962.446 5.523 0 10-4.477 10-10S17.523 2 12 2z"/></svg>
+        </a>
+        <a class="social-icon" href="#" aria-label="WhatsApp">
+          <svg viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>
+        </a>
+      </div>
+    </div>
+
+    <!-- Quick Links -->
+    <div>
+      <div class="footer-heading">Quick Links</div>
+      <a class="footer-link" href="#">New Arrivals</a>
+      <a class="footer-link" href="#products">Collections</a>
+      <a class="footer-link" href="#products">Shop All</a>
+      <a class="footer-link" href="#about">Our Story</a>
+      <a class="footer-link" href="#">Lookbook</a>
+    </div>
+
+    <!-- Help -->
+    <div>
+      <div class="footer-heading">Customer Care</div>
+      <a class="footer-link" href="#">Size Guide</a>
+      <a class="footer-link" href="#">Shipping Policy</a>
+      <a class="footer-link" href="#">Returns & Exchange</a>
+      <a class="footer-link" href="#">Track Order</a>
+      <a class="footer-link" href="#">Contact Us</a>
+      <a class="footer-link" href="#">FAQs</a>
+    </div>
+
+    <!-- Contact -->
+    <div>
+      <div class="footer-heading">Get In Touch</div>
+      <a class="footer-link" href="tel:+923000000000">+92 300 0000000</a>
+      <a class="footer-link" href="mailto:hello@figs.pk">hello@figs.pk</a>
+      <span class="footer-link">Lahore, Pakistan</span>
+      <div style="margin-top:20px;">
+        <div style="font-size:0.6rem;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;color:#999;margin-bottom:10px;">We Accept</div>
+        <div class="footer-pay">
+          <span class="pay-badge">VISA</span>
+          <span class="pay-badge">MC</span>
+          <span class="pay-badge">JazzCash</span>
+          <span class="pay-badge">COD</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <span class="footer-copy">&copy; 2026 figs.pk. All rights reserved.</span>
+    <div style="display:flex;gap:20px;">
+      <a href="#" class="footer-link" style="margin:0;font-size:0.65rem;">Privacy Policy</a>
+      <a href="#" class="footer-link" style="margin:0;font-size:0.65rem;">Terms & Conditions</a>
+    </div>
+  </div>
+</footer>
+
+<!-- ═══════════════════════════════════════════════
+     JAVASCRIPT
+════════════════════════════════════════════════ -->
+<script>
+  /* ── Loader ── */
+  window.addEventListener('load', () => {
+    setTimeout(() => document.getElementById('page-loader').classList.add('hidden'), 900);
+  });
+
+  /* ── Sticky nav ── */
+  const mainNav = document.getElementById('main-nav');
+  window.addEventListener('scroll', () => {
+    mainNav.classList.toggle('scrolled', window.scrollY > 40);
+  }, { passive: true });
+
+  /* ── Mobile nav ── */
+  function openMobileNav() {
+    document.getElementById('mobile-nav').classList.add('open');
+    document.getElementById('nav-overlay').classList.add('open');
+  }
+  function closeMobileNav() {
+    document.getElementById('mobile-nav').classList.remove('open');
+    document.getElementById('nav-overlay').classList.remove('open');
+  }
+
+  /* ── Filter drawer (mobile) ── */
+  let filterOpen = false;
+  function toggleFilter() {
+    const sidebar = document.getElementById('desktop-sidebar');
+    const btn     = document.getElementById('filter-toggle-btn');
+    const grid    = document.getElementById('product-grid');
+    if (window.innerWidth < 768) {
+      document.getElementById('filter-drawer').classList.toggle('open');
+      document.getElementById('filter-overlay').classList.toggle('open');
+    } else {
+      filterOpen = !filterOpen;
+      sidebar.classList.toggle('open', filterOpen);
+      btn.textContent = filterOpen ? 'Filter −' : 'Filter +';
+      // Adjust grid columns
+      if (filterOpen) {
+        const currentCols = [...grid.classList].find(c => c.startsWith('cols-'));
+        const n = parseInt(currentCols?.replace('cols-','') || 4);
+        setGrid(Math.max(2, n - 1));
+      }
+    }
+  }
+  function closeFilter() {
+    document.getElementById('filter-drawer').classList.remove('open');
+    document.getElementById('filter-overlay').classList.remove('open');
+  }
+
+  /* ── Grid density ── */
+  function setGrid(n) {
+    const grid = document.getElementById('product-grid');
+    grid.className = `cols-${n}`;
+    document.querySelectorAll('.gt-btn').forEach(b => b.classList.remove('active'));
+    // find the button matching n — by index (2=0, 3=1, 4=2)
+    const btns = document.querySelectorAll('.gt-btn');
+    const idx  = n - 2;
+    if (btns[idx]) btns[idx].classList.add('active');
+  }
+
+  /* ── Collection tab switch ── */
+  function switchTab(btn, cat) {
+    document.querySelectorAll('.col-tab').forEach(b => {
+      b.classList.remove('active');
+      b.setAttribute('aria-selected', 'false');
+    });
+    btn.classList.add('active');
+    btn.setAttribute('aria-selected', 'true');
+    filterByCategory(cat);
+  }
+
+  function filterByCategory(cat) {
+    const cards = document.querySelectorAll('#product-grid article');
+    let count = 0;
+    cards.forEach(c => {
+      const show = cat === 'all' || c.dataset.category === cat;
+      c.style.display = show ? '' : 'none';
+      if (show) count++;
+    });
+    document.getElementById('results-count').textContent = `${count} Product${count !== 1 ? 's' : ''}`;
+  }
+
+  /* ── Desktop sidebar filters ── */
+  function applyDesktopFilter() {
+    const checked = [...document.querySelectorAll('#desktop-sidebar input[data-filter]:checked')].map(i => i.dataset.filter);
+    const cards   = document.querySelectorAll('#product-grid article');
+    let count = 0;
+    cards.forEach(c => {
+      const show = checked.length === 0 || checked.includes(c.dataset.category);
+      c.style.display = show ? '' : 'none';
+      if (show) count++;
+    });
+    document.getElementById('results-count').textContent = `${count} Product${count !== 1 ? 's' : ''}`;
+  }
+
+  function applyFilter() { /* mobile drawer, placeholder */ }
+  function clearFilters() { document.querySelectorAll('#filter-drawer input').forEach(i => i.checked = false); closeFilter(); }
+
+  /* ── Sort ── */
+  function sortProducts(val) {
+    const grid  = document.getElementById('product-grid');
+    const cards = [...grid.querySelectorAll('article')];
+    cards.sort((a, b) => {
+      const pa = parseInt(a.dataset.price);
+      const pb = parseInt(b.dataset.price);
+      if (val === 'price-asc')  return pa - pb;
+      if (val === 'price-desc') return pb - pa;
+      return 0;
+    });
+    cards.forEach(c => grid.appendChild(c));
+  }
+
+  /* ── Add to cart ── */
+  let cartCount = 0;
+  function addToCart(name, price) {
+    cartCount++;
+    const badge = document.getElementById('cart-badge');
+    badge.textContent = cartCount;
+    badge.style.display = 'flex';
+    showToast(`${name} — Rs.${price} added to bag`);
+  }
+
+  /* ── Wishlist ── */
+  function toggleWish(btn) {
+    btn.classList.toggle('liked');
+  }
+
+  /* ── Toast ── */
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(t._timer);
+    t._timer = setTimeout(() => t.classList.remove('show'), 3000);
+  }
+
+  /* ── Open cart (placeholder) ── */
+  function openCart() { showToast(`${cartCount} item${cartCount !== 1?'s':''} in your bag`); }
+
+  /* ── Newsletter ── */
+  function subscribeNL(e) {
+    e.preventDefault();
+    const inp = document.getElementById('nl-email');
+    showToast('Welcome to the figs.pk Circle!');
+    inp.value = '';
+  }
+
+  /* ── Load more (placeholder) ── */
+  function loadMore() {
+    showToast('All products are loaded.');
+  }
+
+  /* ── Scroll fade-in ── */
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); }
+    });
+  }, { threshold: 0.08 });
+  document.querySelectorAll('.fade-in').forEach(el => io.observe(el));
+</script>
+</body>
+</html>
